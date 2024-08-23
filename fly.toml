@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for bun-expense-tracker on 2024-08-20T19:09:57+03:00
+# fly.toml app configuration file generated for expensesss on 2024-08-23T21:41:41+03:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'bun-expense-tracker'
+app = 'expensesss'
 primary_region = 'jnb'
 
 [build]
