@@ -8,6 +8,13 @@
       "when": 1724355560429,
       "tag": "0000_crazy_vertigo",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1724432995049,
+      "tag": "0001_daily_thena",
+      "breakpoints": true
     }
   ]
 }
