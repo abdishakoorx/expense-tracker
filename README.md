@@ -1,4 +1,4 @@
-Expense Tracker
+# Expense Tracker
 
 Expense Tracker is a modern, full-stack application built with the latest technologies, designed for tracking expenses efficiently. This project is open to all, encouraging learning and collaboration.
 
@@ -29,7 +29,7 @@ Installation
 
     bash
 
-git clone https://github.com/abdishakoorx/expense-tracker.git
+[git clone https://github.com/abdishakoorx/expense-tracker.git](https://github.com/abdishakoorx/expense-tracker.git)
 cd expense-tracker
 
 Install Dependencies:
@@ -108,7 +108,7 @@ If you wish to use this project as a base for your own work:
 
     bash
 
-git clone https://github.com/yourusername/your-forked-repo.git
+git clone [git clone https://github.com/abdishakoorx/expense-tracker.git](https://github.com/abdishakoorx/expense-tracker.git)
 cd your-forked-repo
 
 Make Your Changes:
@@ -145,4 +145,4 @@ Additional Resources
 
 Credit
 
-Inspiration for this project came from Sam Meech-Ward - https://www.youtube.com/@SamMeechWard. Check out the YouTube video (https://youtu.be/jXyTIQOfTTk?si=N_l96kmhTaGzD8xB) that inspired this project.
+Inspiration for this project came from Sam Meech-Ward - (https://www.youtube.com/@SamMeechWard). Check out the YouTube video (https://youtu.be/jXyTIQOfTTk?si=N_l96kmhTaGzD8xB) that inspired this project.
