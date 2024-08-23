@@ -25,7 +25,6 @@ function Create() {
         throw new Error("Failed to create expense");
       }
       toast("Expense created");
-      await new Promise(resolve => setTimeout(resolve, 3000));
       navigate({to: "/expenses"});
       
     },
