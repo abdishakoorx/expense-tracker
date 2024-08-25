@@ -5,16 +5,7 @@ import { getUser } from "../kinde";
 import { db } from "../db";
 import { expenses as expensesTable } from "../db/schema/expenses";
 import { desc, eq, sum, and } from "drizzle-orm";
-
-const expenseShema = z.object({
-  id: z.number().int().positive().min(1),
-  title: z.string().min(3).max(80),
-  amount: z.string(),
-});
-
-type Expense = z.infer<typeof expenseShema>;
-
-const createPostSchema = expenseShema.omit({ id: true });
+import { createPostSchema } from "../sharedTypes";
 
 export const expenseRoute = new Hono()
   .get("/", getUser, async (c) => {

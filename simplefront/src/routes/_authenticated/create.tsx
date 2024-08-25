@@ -6,6 +6,8 @@ import { useForm } from "@tanstack/react-form";
 import { CubeIcon } from "@radix-ui/react-icons";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
+import { zodValidator } from "@tanstack/zod-form-adapter";
+import { createPostSchema } from "../../../../server/sharedTypes";
 
 export const Route = createFileRoute("/_authenticated/create")({
   component: Create,
@@ -14,19 +16,19 @@ export const Route = createFileRoute("/_authenticated/create")({
 function Create() {
   const navigate = useNavigate();
   const form = useForm({
+    validatorAdapter: zodValidator(),
     defaultValues: {
       title: "",
       amount: "0",
     },
     onSubmit: async ({ value }) => {
       // Do something with form data
-      const resp = await api.expenses.$post({json: value});
-      if (!resp.ok){
+      const resp = await api.expenses.$post({ json: value });
+      if (!resp.ok) {
         throw new Error("Failed to create expense");
       }
       toast("Expense created");
-      navigate({to: "/expenses"});
-      
+      navigate({ to: "/expenses" });
     },
   });
 
@@ -43,6 +45,9 @@ function Create() {
         <div>
           <form.Field
             name="title"
+            validators={{
+              onChange: createPostSchema.shape.title,
+            }}
             children={(field) => (
               <>
                 <Label htmlFor={field.name}>Title</Label>
@@ -64,6 +69,9 @@ function Create() {
         <div>
           <form.Field
             name="amount"
+            validators={{
+              onChange: createPostSchema.shape.amount,
+            }}
             children={(field) => (
               <>
                 <Label htmlFor={field.name}>Amount</Label>
@@ -93,7 +101,11 @@ function Create() {
               className="bg-accent"
               disabled={!canSubmit}
             >
-              {isSubmitting ? <CubeIcon className="animate-spin" /> : "Create Expense"}
+              {isSubmitting ? (
+                <CubeIcon className="animate-spin" />
+              ) : (
+                "Create Expense"
+              )}
             </Button>
           )}
         />
