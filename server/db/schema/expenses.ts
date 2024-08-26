@@ -1,3 +1,4 @@
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { index, numeric, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 
 export const expenses = pgTable(
@@ -15,3 +16,9 @@ export const expenses = pgTable(
     };
   }
 );
+
+// Schema for inserting a user - can be used to validate API requests
+export const insertExpensesSchema = createInsertSchema(expenses);
+
+// Schema for selecting a user - can be used to validate API responses
+export const selectExpensesSchema = createSelectSchema(expenses);

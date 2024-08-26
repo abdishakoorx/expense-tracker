@@ -1,9 +1,11 @@
 import { Hono } from "hono";
-import { z } from "zod";
 import { zValidator } from "@hono/zod-validator";
 import { getUser } from "../kinde";
 import { db } from "../db";
-import { expenses as expensesTable } from "../db/schema/expenses";
+import {
+  expenses as expensesTable,
+  insertExpensesSchema,
+} from "../db/schema/expenses";
 import { desc, eq, sum, and } from "drizzle-orm";
 import { createPostSchema } from "../sharedTypes";
 
@@ -24,10 +26,17 @@ export const expenseRoute = new Hono()
   .post("/", getUser, zValidator("json", createPostSchema), async (c) => {
     const user = c.var.user;
     const expense = await c.req.valid("json");
-    const result = await db.insert(expensesTable).values({
+
+    const validatedExpense = insertExpensesSchema.parse({
       ...expense,
       userId: user.id,
     });
+
+    const result = await db
+      .insert(expensesTable)
+      .values(validatedExpense)
+      .returning();
+
     c.status(201);
     return c.json(result);
   })
