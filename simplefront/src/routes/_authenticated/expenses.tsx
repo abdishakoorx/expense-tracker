@@ -47,6 +47,7 @@ function Expenses() {
             <TableRow>
               <TableHead className="w-[100px]">ID</TableHead>
               <TableHead>Title</TableHead>
+              <TableHead className="text-right">Date</TableHead>
               <TableHead className="text-right">Amount</TableHead>
             </TableRow>
           </TableHeader>
@@ -75,6 +76,9 @@ function Expenses() {
                     <TableCell className="font-medium">{expense.id}</TableCell>
                     <TableCell>{expense.title}</TableCell>
                     <TableCell className="text-right">
+                      {expense.date}
+                    </TableCell>
+                    <TableCell className="text-right">
                       {expense.amount}
                     </TableCell>
                   </TableRow>
@@ -84,7 +88,7 @@ function Expenses() {
           )}
           <TableFooter>
             <TableRow>
-              <TableCell colSpan={2}>Total</TableCell>
+              <TableCell colSpan={3}>Total</TableCell>
               <TableCell className="text-right">$ {totalAmount}</TableCell>
             </TableRow>
           </TableFooter>

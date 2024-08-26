@@ -3,11 +3,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useForm } from "@tanstack/react-form";
-import { CubeIcon } from "@radix-ui/react-icons";
+import {  CalendarIcon, CubeIcon } from "@radix-ui/react-icons";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 import { zodValidator } from "@tanstack/zod-form-adapter";
 import { createPostSchema } from "../../../../server/sharedTypes";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 
 export const Route = createFileRoute("/_authenticated/create")({
   component: Create,
@@ -20,6 +28,7 @@ function Create() {
     defaultValues: {
       title: "",
       amount: "0",
+      date: new Date().toISOString(),
     },
     onSubmit: async ({ value }) => {
       // Do something with form data
@@ -87,6 +96,46 @@ function Create() {
                 field.state.meta.errors.length ? (
                   <em>{field.state.meta.errors.join(", ")}</em>
                 ) : null}
+              </>
+            )}
+          />
+        </div>
+        <div>
+          <form.Field
+            name="date"
+            validators={{
+              onChange: createPostSchema.shape.date,
+            }}
+            children={(field) => (
+              <>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-[240px] justify-start text-left font-normal",
+                        !Date && "text-muted-foreground"
+                      )}
+                    >
+                       <CalendarIcon className="w-4 h-4 mr-2" />
+                      {field.state.value ? format(field.state.value, "PPP") : <span>Pick a date</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={new Date(field.state.value)}
+                      onSelect={(date) =>
+                        field.handleChange((date ?? new Date()).toISOString())
+                      }
+                      className="border rounded-md shadow"
+                    />
+                    {field.state.meta.isTouched &&
+                    field.state.meta.errors.length ? (
+                      <em>{field.state.meta.errors.join(", ")}</em>
+                    ) : null}
+                  </PopoverContent>
+                </Popover>
               </>
             )}
           />
