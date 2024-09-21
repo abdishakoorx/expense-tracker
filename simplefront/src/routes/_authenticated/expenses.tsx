@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { api } from "@/lib/api";
+import { fetchAllExpensesOptions } from "@/lib/api";
 import {
   Table,
   TableBody,
@@ -17,21 +17,9 @@ export const Route = createFileRoute("/_authenticated/expenses")({
   component: Expenses,
 });
 
-async function fetchAllExpenses() {
-  const resp = await api.expenses.$get();
-  if (!resp.ok) {
-    throw new Error("Failed to fetch total");
-  }
-  const data = await resp.json();
-  return data;
-}
-
 function Expenses() {
   // Queries
-  const { isPending, error, data } = useQuery({
-    queryKey: ["get-all-expenses"],
-    queryFn: fetchAllExpenses,
-  });
+  const { isPending, error, data } = useQuery(fetchAllExpensesOptions);
 
   if (error) {
     return <div>Error: {error.message}</div>;
@@ -75,9 +63,7 @@ function Expenses() {
                   <TableRow key={expense.id}>
                     <TableCell className="font-medium">{expense.id}</TableCell>
                     <TableCell>{expense.title}</TableCell>
-                    <TableCell className="text-right">
-                      {expense.date}
-                    </TableCell>
+                    <TableCell className="text-right">{expense.date}</TableCell>
                     <TableCell className="text-right">
                       {expense.amount}
                     </TableCell>

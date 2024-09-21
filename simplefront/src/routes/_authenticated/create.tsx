@@ -3,8 +3,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useForm } from "@tanstack/react-form";
-import {  CalendarIcon, CubeIcon } from "@radix-ui/react-icons";
-import { api } from "@/lib/api";
+import { CalendarIcon, CubeIcon } from "@radix-ui/react-icons";
+import { createExpense, fetchAllExpensesOptions } from "@/lib/api";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { zodValidator } from "@tanstack/zod-form-adapter";
 import { createPostSchema } from "../../../../server/sharedTypes";
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/_authenticated/create")({
 });
 
 function Create() {
+  const queryclient = useQueryClient();
   const navigate = useNavigate();
   const form = useForm({
     validatorAdapter: zodValidator(),
@@ -32,12 +34,18 @@ function Create() {
     },
     onSubmit: async ({ value }) => {
       // Do something with form data
-      const resp = await api.expenses.$post({ json: value });
-      if (!resp.ok) {
-        throw new Error("Failed to create expense");
-      }
-      toast("Expense created");
+      const existingExpenses = await queryclient.ensureQueryData(
+        fetchAllExpensesOptions
+      );
+      toast.success("Expense created");
       navigate({ to: "/expenses" });
+
+      const newExpense = await createExpense({value})
+      queryclient.setQueryData(fetchAllExpensesOptions.queryKey, {
+        ...existingExpenses,
+        expenses: [newExpense, ...existingExpenses.expenses],
+      });
+
     },
   });
 
@@ -117,8 +125,12 @@ function Create() {
                         !Date && "text-muted-foreground"
                       )}
                     >
-                       <CalendarIcon className="w-4 h-4 mr-2" />
-                      {field.state.value ? format(field.state.value, "PPP") : <span>Pick a date</span>}
+                      <CalendarIcon className="w-4 h-4 mr-2" />
+                      {field.state.value ? (
+                        format(field.state.value, "PPP")
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
