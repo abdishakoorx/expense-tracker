@@ -4,7 +4,11 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useForm } from "@tanstack/react-form";
 import { CalendarIcon, CubeIcon } from "@radix-ui/react-icons";
-import { createExpense, fetchAllExpensesOptions } from "@/lib/api";
+import {
+  createExpense,
+  fetchAllExpensesOptions,
+  loadingCreateExpenseQueryOptions,
+} from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { zodValidator } from "@tanstack/zod-form-adapter";
@@ -37,15 +41,29 @@ function Create() {
       const existingExpenses = await queryclient.ensureQueryData(
         fetchAllExpensesOptions
       );
-      toast.success("Expense created");
       navigate({ to: "/expenses" });
 
-      const newExpense = await createExpense({value})
-      queryclient.setQueryData(fetchAllExpensesOptions.queryKey, {
-        ...existingExpenses,
-        expenses: [newExpense, ...existingExpenses.expenses],
+      // loading
+      queryclient.setQueryData(loadingCreateExpenseQueryOptions.queryKey, {
+        expense: value,
       });
 
+      try {
+        // success
+        const newExpense = await createExpense({ value });
+        queryclient.setQueryData(fetchAllExpensesOptions.queryKey, {
+          ...existingExpenses,
+          expenses: [newExpense, ...existingExpenses.expenses],
+        });
+        toast.success("Expense created", {
+          description: `Successfully created new expense: ${newExpense.id}`,
+        });
+      } catch {
+        // error
+        toast.error("Failed to create expense");
+      } finally {
+        queryclient.setQueryData(loadingCreateExpenseQueryOptions.queryKey, {});
+      }
     },
   });
 

@@ -1,17 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { fetchAllExpensesOptions } from "@/lib/api";
+import {
+  fetchAllExpensesOptions,
+  loadingCreateExpenseQueryOptions,
+} from "@/lib/api";
 import {
   Table,
   TableBody,
   TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
+import DeleteExpense from "@/(components)/DeleteExpense";
 
 export const Route = createFileRoute("/_authenticated/expenses")({
   component: Expenses,
@@ -21,10 +24,13 @@ function Expenses() {
   // Queries
   const { isPending, error, data } = useQuery(fetchAllExpensesOptions);
 
+  const { data: loadingCreateExpense } = useQuery(
+    loadingCreateExpenseQueryOptions
+  );
+
   if (error) {
     return <div>Error: {error.message}</div>;
   }
-  let totalAmount = 0;
 
   return (
     <>
@@ -37,8 +43,26 @@ function Expenses() {
               <TableHead>Title</TableHead>
               <TableHead className="text-right">Date</TableHead>
               <TableHead className="text-right">Amount</TableHead>
+              <TableHead className="text-right">Delete</TableHead>
             </TableRow>
           </TableHeader>
+          {loadingCreateExpense?.expense && (
+            <TableRow>
+              <TableCell className="font-medium">
+                <Skeleton className="h-8" />
+              </TableCell>
+              <TableCell>{loadingCreateExpense?.expense.title}</TableCell>
+              <TableCell className="text-right">
+                {loadingCreateExpense?.expense.date}
+              </TableCell>
+              <TableCell className="text-right">
+                {loadingCreateExpense?.expense.amount}
+              </TableCell>
+              <TableCell className="font-medium">
+                <Skeleton className="h-8" />
+              </TableCell>
+            </TableRow>
+          )}
           {isPending ? (
             Array(4)
               .fill(0)
@@ -53,12 +77,14 @@ function Expenses() {
                   <TableCell className="text-right">
                     <Skeleton className="h-8" />
                   </TableCell>
+                  <TableCell className="text-right">
+                    <Skeleton className="h-8" />
+                  </TableCell>
                 </TableRow>
               ))
           ) : (
             <TableBody>
               {data?.expenses.map((expense) => {
-                totalAmount += Number(expense.amount);
                 return (
                   <TableRow key={expense.id}>
                     <TableCell className="font-medium">{expense.id}</TableCell>
@@ -67,17 +93,14 @@ function Expenses() {
                     <TableCell className="text-right">
                       {expense.amount}
                     </TableCell>
+                    <TableCell className="text-right">
+                      <DeleteExpense id={expense.id} />
+                    </TableCell>
                   </TableRow>
                 );
               })}
             </TableBody>
           )}
-          <TableFooter>
-            <TableRow>
-              <TableCell colSpan={3}>Total</TableCell>
-              <TableCell className="text-right">$ {totalAmount}</TableCell>
-            </TableRow>
-          </TableFooter>
         </Table>
       </div>
     </>

@@ -39,11 +39,30 @@ export const fetchAllExpensesOptions = queryOptions({
 });
 
 export async function createExpense({ value }: { value: createPostExpense }) {
-  await new Promise(resolve => setTimeout(resolve, 4000));
   const resp = await api.expenses.$post({ json: value });
   if (!resp.ok) {
     toast.error("Failed to create expense");
   }
   const newExpense = await resp.json();
   return newExpense;
+}
+
+export const loadingCreateExpenseQueryOptions = queryOptions<{
+  expense?: createPostExpense;
+}>({
+  queryKey: ["loading-create-expense"],
+  queryFn: async () => {
+    return {};
+  },
+  staleTime: Infinity,
+});
+
+export async function deleteExpense({ id }: { id: number }) {
+  const resp = await api.expenses[":id{[0-9]+}"].$delete({
+    param: { id: id.toString() },
+  });
+
+  if(!resp.ok){
+    throw new Error("Server Error")
+  }
 }
